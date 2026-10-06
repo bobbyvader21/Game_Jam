@@ -13,10 +13,19 @@ public class Camera_Persp_Change : MonoBehaviour
     public float duration = 1.0f;
     [Range(0, 1)] public float currentT = 0f;
 
+    [Header("Camera Ortho Offset")]
+    public Vector3 CameraOrthoOffset = new Vector3(0.0f, 0.0f, 0.0f);
+
+    private CameraControls controls;
+    private Vector2 lookInput;
+    private float xRotation = 0f;
+    private float yRotation = 0f;
+
     void Awake()
     {
         cam = GetComponent<Camera>();
         isOrthographic = cam.orthographic;
+        controls = new CameraControls();
     }
 
     public void OnPerspchange(InputValue value)
@@ -27,12 +36,49 @@ public class Camera_Persp_Change : MonoBehaviour
         }
     }
 
+    public float mouseSensitivity = 100f;
+    public Transform playerBody; // Assign your parent player object here if doing First Person
+
+
+
+
+    private void OnEnable()
+    {
+        controls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Disable();
+    }
+
+    private void Start()
+    {
+        // Lock cursor to the center of the screen and hide it
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+
+
     [SerializeField] private Transform targetObject;
 
     Vector3 targetPosition;
-    Vector3 cameraPosition = new Vector3(50f, 40f, 100f);
+    Vector3 cameraPosition;
+    Vector3 cameraRotation;
     void Update()
     {
+
+        float mouseX = lookInput.x * mouseSensitivity * Time.deltaTime;
+        float mouseY = lookInput.y * mouseSensitivity * Time.deltaTime;
+
+        // Read the Vector2 Delta value from the mouse
+        lookInput = controls.CamLook3D.CamMouse.ReadValue<Vector2>();
+
+
+
+        // Calculate vertical rotation and clamp it so you can't look upside down
+
+
         if (targetObject != null)
         {
             // Access the position vector (X, Y, Z)
@@ -40,6 +86,24 @@ public class Camera_Persp_Change : MonoBehaviour
 
             Debug.Log("Target Position: " + targetPosition);
         }
+        if (isOrthographic)
+        {
+            cameraPosition = targetPosition + CameraOrthoOffset;
+        } else
+        {
+            xRotation -= mouseY;
+            xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+            yRotation += mouseX;
+            yRotation = yRotation % 360;
+
+            transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
+            //transform.Rotate(Vector3.up * mouseX, Space.World);
+        }
+
+
+
+
+
     }
 
     public void ToggleProjection()
@@ -57,6 +121,7 @@ public class Camera_Persp_Change : MonoBehaviour
         // Calculate the base matrices for both modes
         Matrix4x4 perspectiveMatrix = GetPerspectiveMatrix();
         Matrix4x4 orthoMatrix = GetOrthoMatrix();
+        Vector3 PrevCamRot = new Vector3(xRotation,yRotation,0.0f);
 
         while (time < duration)
         {
@@ -71,7 +136,7 @@ public class Camera_Persp_Change : MonoBehaviour
             currentT = smoothedT;
 
             //change cam rot & pos
-            transform.rotation = Quaternion.Euler(0, -90 * smoothedT, 0);
+            transform.rotation = Quaternion.Euler(PrevCamRot.x * (1-smoothedT), (PrevCamRot.y * (1-smoothedT)) + (-90 * smoothedT), 0);
             transform.position = VectorLerp(targetPosition, cameraPosition, smoothedT);
 
             // Linearly interpolate the individual values inside the matrix row by row
@@ -83,6 +148,8 @@ public class Camera_Persp_Change : MonoBehaviour
         currentT = targetT;
         cam.orthographic = isOrthographic;
         cam.ResetProjectionMatrix();
+        xRotation = 0.0f;
+        yRotation = 0.0f;
     }
 
     private Matrix4x4 GetPerspectiveMatrix()

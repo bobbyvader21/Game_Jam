@@ -30,6 +30,35 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "CamLook3D",
+            "id": "500c82d2-faad-46dd-a142-f14690c87d0d",
+            "actions": [
+                {
+                    "name": "CamMouse",
+                    "type": "Value",
+                    "id": "5e063f19-f770-432f-ab56-d91346f1f848",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "670a91da-0611-42e5-9714-85fd1f1dcd7d",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CamMouse",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
