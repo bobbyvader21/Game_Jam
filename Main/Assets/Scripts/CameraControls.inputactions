@@ -1,0 +1,36 @@
+{
+    "version": 1,
+    "name": "CameraControls",
+    "maps": [
+        {
+            "name": "PerspChange",
+            "id": "87446c1a-7710-4226-b824-6f90c4359639",
+            "actions": [
+                {
+                    "name": "Perspchange",
+                    "type": "Button",
+                    "id": "e3620e28-48db-4aca-af0c-92655f609e74",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "8e52d9ed-a5bd-45c7-b654-8c894040f438",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Perspchange",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
