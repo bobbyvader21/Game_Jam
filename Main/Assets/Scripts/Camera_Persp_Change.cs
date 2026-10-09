@@ -21,6 +21,8 @@ public class Camera_Persp_Change : MonoBehaviour
     private float xRotation = 0f;
     private float yRotation = 0f;
 
+
+
     void Awake()
     {
         cam = GetComponent<Camera>();
@@ -36,7 +38,7 @@ public class Camera_Persp_Change : MonoBehaviour
         }
     }
 
-    public float mouseSensitivity = 100f;
+    public float mouseSensitivity = 50f;
     public Transform playerBody; // Assign your parent player object here if doing First Person
 
 
@@ -55,6 +57,8 @@ public class Camera_Persp_Change : MonoBehaviour
     private void Start()
     {
         // Lock cursor to the center of the screen and hide it
+        isOrthographic = !isOrthographic;
+        ToggleProjection();
         Cursor.lockState = CursorLockMode.Locked;
     }
 
