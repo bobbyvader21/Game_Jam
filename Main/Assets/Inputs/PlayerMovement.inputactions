@@ -76,7 +76,7 @@
                 },
                 {
                     "name": "Move",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "d9fc49c4-032b-434b-a4ed-8b1e393faa4c",
                     "expectedControlType": "Vector2",
                     "processors": "",
