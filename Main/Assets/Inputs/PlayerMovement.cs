@@ -173,17 +173,6 @@ public partial class @PlayerMovement: IInputActionCollection2, IDisposable
             ],
             ""bindings"": [
                 {
-                    ""name"": """",
-                    ""id"": ""33c9edf9-b0a3-4748-ae80-8f9c0cb6486e"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Jump"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
                     ""name"": ""2D Vector"",
                     ""id"": ""fc8d1661-4500-4b05-885b-bbdc9e2f2c6d"",
                     ""path"": ""2DVector"",
@@ -197,7 +186,7 @@ public partial class @PlayerMovement: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""up"",
                     ""id"": ""d17630ef-2b59-46f0-9e0a-ecfc0146146f"",
-                    ""path"": """",
+                    ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -239,6 +228,101 @@ public partial class @PlayerMovement: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""Player3D"",
+            ""id"": ""1ad3d75d-eb46-46b4-9fb9-6e1e2269160d"",
+            ""actions"": [
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""5217f300-1dc8-423d-b3bc-54a8935d36f2"",
+                    ""expectedControlType"": ""Vector3"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""3D Vector"",
+                    ""id"": ""d7c12a7d-47d0-48a6-ac84-2ee55304c391"",
+                    ""path"": ""3DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""25ff0875-b18a-40b9-a8f9-9919d1087ffb"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""0d56638e-d99d-4d3b-a37d-d9c338e3c9b0"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""d5152712-0a85-466f-ad80-02a9be54e27c"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""5f7be456-cf10-4656-af49-baabbaefe0f6"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""forward"",
+                    ""id"": ""65063089-cfb8-4852-97de-e14d13839c61"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""backward"",
+                    ""id"": ""d94c9141-fa7d-4dda-a44c-2bc392f14433"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -253,6 +337,9 @@ public partial class @PlayerMovement: IInputActionCollection2, IDisposable
         m_Player2D = asset.FindActionMap("Player2D", throwIfNotFound: true);
         m_Player2D_Jump = m_Player2D.FindAction("Jump", throwIfNotFound: true);
         m_Player2D_Move = m_Player2D.FindAction("Move", throwIfNotFound: true);
+        // Player3D
+        m_Player3D = asset.FindActionMap("Player3D", throwIfNotFound: true);
+        m_Player3D_Move = m_Player3D.FindAction("Move", throwIfNotFound: true);
     }
 
     ~@PlayerMovement()
@@ -260,6 +347,7 @@ public partial class @PlayerMovement: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_CamLook3D.enabled, "This will cause a leak and performance issues, PlayerMovement.CamLook3D.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_PerspChange.enabled, "This will cause a leak and performance issues, PlayerMovement.PerspChange.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Player2D.enabled, "This will cause a leak and performance issues, PlayerMovement.Player2D.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Player3D.enabled, "This will cause a leak and performance issues, PlayerMovement.Player3D.Disable() has not been called.");
     }
 
     /// <summary>
@@ -630,6 +718,102 @@ public partial class @PlayerMovement: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="Player2DActions" /> instance referencing this action map.
     /// </summary>
     public Player2DActions @Player2D => new Player2DActions(this);
+
+    // Player3D
+    private readonly InputActionMap m_Player3D;
+    private List<IPlayer3DActions> m_Player3DActionsCallbackInterfaces = new List<IPlayer3DActions>();
+    private readonly InputAction m_Player3D_Move;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Player3D".
+    /// </summary>
+    public struct Player3DActions
+    {
+        private @PlayerMovement m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public Player3DActions(@PlayerMovement wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Player3D/Move".
+        /// </summary>
+        public InputAction @Move => m_Wrapper.m_Player3D_Move;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Player3D; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="Player3DActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(Player3DActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="Player3DActions" />
+        public void AddCallbacks(IPlayer3DActions instance)
+        {
+            if (instance == null || m_Wrapper.m_Player3DActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_Player3DActionsCallbackInterfaces.Add(instance);
+            @Move.started += instance.OnMove;
+            @Move.performed += instance.OnMove;
+            @Move.canceled += instance.OnMove;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="Player3DActions" />
+        private void UnregisterCallbacks(IPlayer3DActions instance)
+        {
+            @Move.started -= instance.OnMove;
+            @Move.performed -= instance.OnMove;
+            @Move.canceled -= instance.OnMove;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="Player3DActions.UnregisterCallbacks(IPlayer3DActions)" />.
+        /// </summary>
+        /// <seealso cref="Player3DActions.UnregisterCallbacks(IPlayer3DActions)" />
+        public void RemoveCallbacks(IPlayer3DActions instance)
+        {
+            if (m_Wrapper.m_Player3DActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="Player3DActions.AddCallbacks(IPlayer3DActions)" />
+        /// <seealso cref="Player3DActions.RemoveCallbacks(IPlayer3DActions)" />
+        /// <seealso cref="Player3DActions.UnregisterCallbacks(IPlayer3DActions)" />
+        public void SetCallbacks(IPlayer3DActions instance)
+        {
+            foreach (var item in m_Wrapper.m_Player3DActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_Player3DActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="Player3DActions" /> instance referencing this action map.
+    /// </summary>
+    public Player3DActions @Player3D => new Player3DActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "CamLook3D" which allows adding and removing callbacks.
     /// </summary>
@@ -674,6 +858,21 @@ public partial class @PlayerMovement: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnJump(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Move" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMove(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Player3D" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="Player3DActions.AddCallbacks(IPlayer3DActions)" />
+    /// <seealso cref="Player3DActions.RemoveCallbacks(IPlayer3DActions)" />
+    public interface IPlayer3DActions
+    {
         /// <summary>
         /// Method invoked when associated input action "Move" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class Camera_Persp_Change : MonoBehaviour
 {
     private Camera cam;
-    private bool isOrthographic = false;
+    public bool isOrthographic = false;
     private Coroutine blendCoroutine;
 
     [Header("Transition Settings")]
@@ -18,7 +18,7 @@ public class Camera_Persp_Change : MonoBehaviour
 
     private CameraControls controls;
     private Vector2 lookInput;
-    private float xRotation = 0f;
+    public float xRotation = 0f;
     private float yRotation = 0f;
 
 
@@ -38,7 +38,7 @@ public class Camera_Persp_Change : MonoBehaviour
         }
     }
 
-    public float mouseSensitivity = 50f;
+    [SerializeField] public float mouseSensitivity = 50f;
     public Transform playerBody; // Assign your parent player object here if doing First Person
 
 

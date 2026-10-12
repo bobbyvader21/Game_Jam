@@ -4,6 +4,11 @@ using UnityEngine.InputSystem;
 
 public class playerController : MonoBehaviour
 {
+    
+    [Header("Camera Reference")]
+    [SerializeField] private Transform Cam;
+    public Camera_Persp_Change Camera_Persp_ChangeRef;
+
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float JumpForce = 12f;
@@ -12,9 +17,14 @@ public class playerController : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private LayerMask groundLayer;
+    [Header("Wall Check")]
+    [SerializeField] private float wallCheckRadius = 0.2f;
+    [Header("Better Jump")]
+    [SerializeField] private float fallMultiplier = 2.5f;
     private bool isGrounded;
     private PlayerMovement PlayerControls;
-    private Vector2 movement;
+    private Vector2 movement2D;
+    private Vector3 movement3D;
     private Rigidbody rigidBody;
 
     private void Awake()
@@ -22,7 +32,7 @@ public class playerController : MonoBehaviour
         PlayerControls = new PlayerMovement();
         rigidBody = GetComponent<Rigidbody>();
 
-        PlayerControls.Player2D.Jump.performed += OnJump;
+        //PlayerControls.Player2D.Jump.performed += OnJump;
     }
 
     private void OnEnable()
@@ -36,36 +46,87 @@ public class playerController : MonoBehaviour
 
 
 
-    private void PlayerInput()
+    private void PlayerInput(bool isOrtho)
     {
-        movement = PlayerControls.Player2D.Move.ReadValue<Vector2>();
+        if (isOrtho)
+        {
+            movement2D = PlayerControls.Player2D.Move.ReadValue<Vector2>();
+        } else
+        {
+            movement3D = PlayerControls.Player3D.Move.ReadValue<Vector3>();
+        }
     }
     private void checkIsGrounded()
     {
-        isGrounded = (Physics.OverlapSphere(groundCheck.position, groundCheckRadius, groundLayer).Length > 0) ? true : false;
+        Vector3 pos0 = groundCheck.position + new Vector3(-0.5f, 0f, 0f);
+        Vector3 pos1 = groundCheck.position + new Vector3(0.5f, 0f, 0f);
+        isGrounded = (Physics.OverlapCapsule(pos0,pos1, groundCheckRadius, groundLayer).Length > 0) ? true : false;
     }
+
+    
 
     private void FixedUpdate()
     {
-        Move();
+        Move(Camera_Persp_ChangeRef.isOrthographic);
+        handleBetterFall();
+        
     }
     private void Update()
     {
-        PlayerInput();
+        PlayerInput(Camera_Persp_ChangeRef.isOrthographic);
         checkIsGrounded();
+        camAngle = getCamAngle();
     }
-
-    private void Move()
+    private Vector3 camAngle;
+    private Vector3 getCamAngle()
     {
-        rigidBody.linearVelocity = new Vector3(rigidBody.linearVelocity.x,rigidBody.linearVelocity.y, -1 * movement.x * moveSpeed);
+        if(Cam != null)
+        {
+            Vector3 camAngle = Cam.eulerAngles;
+            //Debug.Log($"Rotation in Degrees: {camAngle}");
+            return camAngle;
+        }
+        return new Vector3(0f, 0f, 0f);
+    }
+    private void Move(bool isOrtho)
+    {
+        if (isOrtho)
+        {
+            if (isGrounded && Camera_Persp_ChangeRef.isOrthographic)
+            {
+                if (movement2D.y > 0) rigidBody.linearVelocity = new Vector3(rigidBody.linearVelocity.x, JumpForce, rigidBody.linearVelocity.z);
+            }
+
+            rigidBody.linearVelocity = new Vector3(rigidBody.linearVelocity.x, rigidBody.linearVelocity.y, -1 * movement2D.x * moveSpeed);
+            //Debug.Log(movement2D);
+        }
+        else
+        {
+            float radians = camAngle.y * Mathf.Deg2Rad;
+            float camSin = Mathf.Sin(radians);
+            float camCos = Mathf.Cos(radians);
+
+            float xmove = movement3D.x * camCos + movement3D.z * camSin;
+            float zmove = -movement3D.x * camSin + movement3D.z * camCos;
+
+            rigidBody.linearVelocity = new Vector3(xmove * moveSpeed, rigidBody.linearVelocity.y, zmove * moveSpeed);
+
+        }
     }
 
     private void OnJump(InputAction.CallbackContext context)
     {
-        if (isGrounded)
+        if (isGrounded && Camera_Persp_ChangeRef.isOrthographic)
         {
             rigidBody.linearVelocity = new Vector3(rigidBody.linearVelocity.x, JumpForce, rigidBody.linearVelocity.z);
         }
         
+    }
+    private void handleBetterFall()
+    {
+        if (rigidBody.linearVelocity.y < 0)
+        {
+            rigidBody.linearVelocity += Vector3.up * Physics.gravity.y * fallMultiplier * Time.fixedDeltaTime;
+        }
     }
 }
