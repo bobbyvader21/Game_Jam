@@ -54,13 +54,30 @@ public class Camera_Persp_Change : MonoBehaviour
 
         yRotation = initialRotation.y;
     }
+    [SerializeField] private Vector3 CamOffset3D = Vector3.zero;
+    private Vector3 currentVelocity = Vector3.zero;
 
-    private void OnEnable()
+    private CameraControls controls;
+    private Vector2 lookInput;
+    private float xRotation = 0f;
+    private float yRotation = 0f;
+    public playerController playerControllerRef;
+
+    [SerializeField] public float mouseSensitivity = 50f;
+    public Transform playerBody;
+
+    [SerializeField] private Transform targetObject;
+    private Vector3 targetPosition;
+    private Vector3 cameraPosition;
+
+    float dist(float x1, float y1, float x2, float y2)
     {
-        controls.Enable();
+        float xdif = x2 - x1;
+        float ydif = y2 - y1;
+        return Mathf.Sqrt(xdif * xdif + ydif * ydif);
     }
 
-    private void OnDisable()
+    private void Awake()
     {
         controls.Disable();
 
@@ -90,6 +107,24 @@ public class Camera_Persp_Change : MonoBehaviour
     {
         if (targetObject == null)
             targetObject = playerBody;
+        cam = GetComponent<Camera>();
+        isOrthographic = cam.orthographic;
+        controls = new CameraControls();
+    }
+
+    private void OnEnable() => controls.Enable();
+    private void OnDisable() => controls.Disable();
+
+    private void Start()
+    {
+        isOrthographic = !isOrthographic;
+        ToggleProjection();
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    private void Update()
+    {
+        lookInput = controls.CamLook3D.CamMouse.ReadValue<Vector2>();
 
         if (targetObject == null)
         {
@@ -192,6 +227,61 @@ public class Camera_Persp_Change : MonoBehaviour
         else
         {
             transform.position = targetObject.position;
+        if (targetObject != null)
+        {
+            targetPosition = targetObject.position;
+        }
+
+        if (isOrthographic)
+        {
+            cameraPosition = targetPosition + CameraOrthoOffset;
+        }
+        else if (!isTransitioning) // Avoid messing with rotation properties mid-transition
+        {
+            xRotation -= mouseY;
+            xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+            yRotation += mouseX;
+            yRotation = yRotation % 360;
+            transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
+        }
+    }
+
+    private void LateUpdate()
+    {
+        // Block positioning logic if the coroutine is blending positions
+        if (isTransitioning) return;
+
+        if (targetObject != null && isOrthographic)
+        {
+            float camx = transform.position.z;
+            float camy = transform.position.y;
+            float tpx = targetObject.position.z;
+            float tpy = targetObject.position.y;
+
+            Vector3 targetPos;
+            if (dist(camx, camy, tpx, tpy) > DeadpanRadius)
+            {
+                targetPos = targetObject.position + CameraOrthoOffset;
+            }
+            else
+            {
+                targetPos = transform.position;
+            }
+
+            transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref currentVelocity, smoothTime);
+        }
+        else
+        {
+            if (targetObject != null && !cam.orthographic)
+                transform.position = targetObject.position + CamOffset3D;
+        }
+    }
+
+    public void OnPerspchange(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            ToggleProjection();
         }
     }
 
@@ -272,6 +362,28 @@ public class Camera_Persp_Change : MonoBehaviour
                 smoothProgress
             );
 
+        float startT = currentT;
+        float time = 0;
+
+        Matrix4x4 perspectiveMatrix = GetPerspectiveMatrix();
+        Matrix4x4 orthoMatrix = GetOrthoMatrix();
+        Vector3 PrevCamRot = new Vector3(xRotation, yRotation, 0.0f);
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float rawT = Mathf.Clamp01(time / duration);
+            float smoothedT = Mathf.SmoothStep(startT, targetT, rawT);
+            currentT = smoothedT;
+
+            // Rotation blend
+            transform.rotation = Quaternion.Euler(PrevCamRot.x * (1 - smoothedT), (PrevCamRot.y * (1 - smoothedT)) + (-90 * smoothedT), 0);
+
+            // Position blend
+            transform.position = Vector3.Lerp(targetPosition + CamOffset3D, cameraPosition, smoothedT);
+
+            // Matrix blend
+            cam.projectionMatrix = MatrixLerp(perspectiveMatrix, orthoMatrix, smoothedT);
             yield return null;
         }
 
@@ -288,6 +400,12 @@ public class Camera_Persp_Change : MonoBehaviour
 
         isTransitioning = false;
         blendCoroutine = null;
+        cam.ResetProjectionMatrix(); // Safe to reset now that state reflects reality
+
+        // Reset tracking vars cleanly for first-person look setup
+        xRotation = 0.0f;
+        yRotation = 0.0f;
+        isTransitioning = false;
     }
 
     private Matrix4x4 GetPerspectiveMatrix()
@@ -298,6 +416,7 @@ public class Camera_Persp_Change : MonoBehaviour
             cam.nearClipPlane,
             cam.farClipPlane
         );
+        return Matrix4x4.Perspective(cam.fieldOfView, cam.aspect, cam.nearClipPlane, cam.farClipPlane);
     }
 
     private Matrix4x4 GetOrthoMatrix()
@@ -326,5 +445,11 @@ public class Camera_Persp_Change : MonoBehaviour
             result[i] = Mathf.Lerp(from[i], to[i], t);
 
         return result;
+    }
+}
+        {
+            blended[i] = Mathf.Lerp(from[i], to[i], t);
+        }
+        return blended;
     }
 }
