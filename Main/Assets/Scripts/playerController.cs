@@ -25,6 +25,9 @@ public class playerController : MonoBehaviour
     private Vector2 movement2D;
     private Vector3 movement3D;
     private Rigidbody rigidBody;
+    private float jumpBufferTime = 0f;
+
+    public Vector3 linearVelocity = new Vector3(0f, 0f, 0f);
 
     private void Awake()
     {
@@ -71,6 +74,15 @@ public class playerController : MonoBehaviour
     {
         Move(Camera_Persp_ChangeRef.isOrthographic);
         handleBetterFall();
+        if (isGrounded)
+        {
+            jumpBufferTime = 0;
+        }
+        else
+        {
+            jumpBufferTime += Time.deltaTime;
+        }
+        //Debug.Log(jumpBufferTime);
         
     }
     private void Update()
@@ -78,6 +90,10 @@ public class playerController : MonoBehaviour
         PlayerInput(Camera_Persp_ChangeRef.isOrthographic);
         checkIsGrounded();
         camAngle = getCamAngle();
+        if (rigidBody)
+        {
+            linearVelocity = rigidBody.linearVelocity;
+        }
     }
     private Vector3 camAngle;
     private Vector3 getCamAngle()
@@ -94,9 +110,13 @@ public class playerController : MonoBehaviour
     {
         if (isOrtho)
         {
-            if (isGrounded && Camera_Persp_ChangeRef.isOrthographic)
+            if (Camera_Persp_ChangeRef.isOrthographic && (jumpBufferTime < 0.1))
             {
-                if (movement2D.y > 0) rigidBody.linearVelocity = new Vector3(rigidBody.linearVelocity.x, JumpForce, rigidBody.linearVelocity.z);
+                if (movement2D.y > 0)
+                {
+                    rigidBody.linearVelocity = new Vector3(rigidBody.linearVelocity.x, JumpForce, rigidBody.linearVelocity.z);
+                    jumpBufferTime += 100;
+                }
             }
 
             rigidBody.linearVelocity = new Vector3(rigidBody.linearVelocity.x, rigidBody.linearVelocity.y, -1 * movement2D.x * moveSpeed);

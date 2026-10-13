@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(Camera))]
 
@@ -13,13 +14,53 @@ public class Camera_Persp_Change : MonoBehaviour
     public float duration = 1.0f;
     [Range(0, 1)] public float currentT = 0f;
 
-    [Header("Camera Ortho Offset")]
+    [Header("Camera Settings")]
     public Vector3 CameraOrthoOffset = new Vector3(0.0f, 0.0f, 0.0f);
+    [SerializeField] private float smoothTime = 0.3f;
+    [SerializeField] private float DeadpanRadius = 1.5f;// Approximate time to reach target
+    private Vector3 currentVelocity = Vector3.zero;
+    float dist(float x1, float y1,float x2, float y2)
+    {
+        float xdif = x2 - x1;
+        float ydif = y2 - y1;
+        return Mathf.Sqrt(xdif * xdif + ydif * ydif);
+    }
+    private void LateUpdate()
+    {
+        if (targetObject != null && isOrthographic)
+        {
+            float camx = transform.position.z;
+            float camy = transform.position.y;
+            float tpx = targetObject.position.z;
+            float tpy = targetObject.position.y;
+            Debug.Log(dist(camx, camy, tpx, tpy));
+            Debug.Log($"camx: {camx}, camy: {camy}, tpx: {tpx}, tpy: {tpy}");
+            // Calculate target location with the relative offset
+            Vector3 targetPosition;
+            if (dist(camx, camy, tpx, tpy) > DeadpanRadius)
+            {
+                targetPosition = targetObject.position + CameraOrthoOffset;
+            } else
+            {
+                targetPosition = transform.position;
+            }
+
+            // Smoothly glide the camera position toward the target position
+            transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref currentVelocity, smoothTime);
+        } else
+        {
+            if(!cam.orthographic) transform.position = targetObject.position;
+        }
+
+        
+    }
 
     private CameraControls controls;
     private Vector2 lookInput;
     private float xRotation = 0f;
     private float yRotation = 0f;
+
+    public playerController playerControllerRef;
 
 
 
@@ -87,8 +128,7 @@ public class Camera_Persp_Change : MonoBehaviour
         {
             // Access the position vector (X, Y, Z)
             targetPosition = targetObject.position;
-
-            //Debug.Log("Target Position: " + targetPosition);
+           
         }
         if (isOrthographic)
         {
