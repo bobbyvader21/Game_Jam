@@ -25,6 +25,7 @@ public class playerController : MonoBehaviour
     private Vector2 movement2D;
     private Vector3 movement3D;
     private Rigidbody rigidBody;
+    private Collider playerCollider;
     private float jumpBufferTime = 0f;
 
     public Vector3 linearVelocity = new Vector3(0f, 0f, 0f);
@@ -33,6 +34,7 @@ public class playerController : MonoBehaviour
     {
         PlayerControls = new PlayerMovement();
         rigidBody = GetComponent<Rigidbody>();
+        playerCollider = GetComponent<Collider>();
 
         //PlayerControls.Player2D.Jump.performed += OnJump;
     }
@@ -118,7 +120,20 @@ public class playerController : MonoBehaviour
                     jumpBufferTime += 100;
                 }
             }
-
+            if (movement2D.magnitude == 0 && isGrounded)
+            {
+                // Stand firm on slopes
+                playerCollider.material.dynamicFriction = 1f;
+                playerCollider.material.staticFriction = 1f;
+                playerCollider.material.frictionCombine = PhysicsMaterialCombine.Maximum;
+            }
+            else
+            {
+                // Slide freely past walls
+                playerCollider.material.dynamicFriction = 0f;
+                playerCollider.material.staticFriction = 0f;
+                playerCollider.material.frictionCombine = PhysicsMaterialCombine.Minimum;
+            }
             rigidBody.linearVelocity = new Vector3(rigidBody.linearVelocity.x, rigidBody.linearVelocity.y, -1 * movement2D.x * moveSpeed);
             //Debug.Log(movement2D);
         }

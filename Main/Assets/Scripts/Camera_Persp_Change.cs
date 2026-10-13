@@ -18,6 +18,7 @@ public class Camera_Persp_Change : MonoBehaviour
     public Vector3 CameraOrthoOffset = new Vector3(0.0f, 0.0f, 0.0f);
     [SerializeField] private float smoothTime = 0.3f;
     [SerializeField] private float DeadpanRadius = 1.5f;// Approximate time to reach target
+    [SerializeField] private Vector3 CamOffset3D = Vector3.zero;
     private Vector3 currentVelocity = Vector3.zero;
     float dist(float x1, float y1,float x2, float y2)
     {
@@ -33,8 +34,8 @@ public class Camera_Persp_Change : MonoBehaviour
             float camy = transform.position.y;
             float tpx = targetObject.position.z;
             float tpy = targetObject.position.y;
-            Debug.Log(dist(camx, camy, tpx, tpy));
-            Debug.Log($"camx: {camx}, camy: {camy}, tpx: {tpx}, tpy: {tpy}");
+            //Debug.Log(dist(camx, camy, tpx, tpy));
+            //Debug.Log($"camx: {camx}, camy: {camy}, tpx: {tpx}, tpy: {tpy}");
             // Calculate target location with the relative offset
             Vector3 targetPosition;
             if (dist(camx, camy, tpx, tpy) > DeadpanRadius)
@@ -49,7 +50,7 @@ public class Camera_Persp_Change : MonoBehaviour
             transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref currentVelocity, smoothTime);
         } else
         {
-            if(!cam.orthographic) transform.position = targetObject.position;
+            if (!cam.orthographic) transform.position = targetObject.position + CamOffset3D;
         }
 
         
@@ -128,7 +129,8 @@ public class Camera_Persp_Change : MonoBehaviour
         {
             // Access the position vector (X, Y, Z)
             targetPosition = targetObject.position;
-           
+
+
         }
         if (isOrthographic)
         {
@@ -181,8 +183,9 @@ public class Camera_Persp_Change : MonoBehaviour
 
             //change cam rot & pos
             transform.rotation = Quaternion.Euler(PrevCamRot.x * (1-smoothedT), (PrevCamRot.y * (1-smoothedT)) + (-90 * smoothedT), 0);
-            transform.position = VectorLerp(targetPosition, cameraPosition, smoothedT);
+            transform.position = VectorLerp(targetPosition + CamOffset3D, cameraPosition, smoothedT);
 
+            
             // Linearly interpolate the individual values inside the matrix row by row
             cam.projectionMatrix = MatrixLerp(perspectiveMatrix, orthoMatrix, smoothedT);
             yield return null;
