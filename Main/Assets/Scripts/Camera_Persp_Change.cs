@@ -1,89 +1,59 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(Camera))]
-
 public class Camera_Persp_Change : MonoBehaviour
 {
     private Camera cam;
-    public bool isOrthographic = false;
+    private CameraControls controls;
     private Coroutine blendCoroutine;
+    private bool isTransitioning;
+
+    public bool isOrthographic = false;
 
     [Header("Transition Settings")]
-    public float duration = 1.0f;
-    [Range(0, 1)] public float currentT = 0f;
+    public float duration = 1f;
+
+    [Range(0f, 1f)]
+    public float currentT = 0f;
 
     [Header("Camera Settings")]
-    public Vector3 CameraOrthoOffset = new Vector3(0.0f, 0.0f, 0.0f);
+    public Vector3 CameraOrthoOffset = new Vector3(2f, 0f, 0f);
+
     [SerializeField] private float smoothTime = 0.3f;
-    [SerializeField] private float DeadpanRadius = 1.5f;// Approximate time to reach target
-    private Vector3 currentVelocity = Vector3.zero;
-    float dist(float x1, float y1,float x2, float y2)
-    {
-        float xdif = x2 - x1;
-        float ydif = y2 - y1;
-        return Mathf.Sqrt(xdif * xdif + ydif * ydif);
-    }
-    private void LateUpdate()
-    {
-        if (targetObject != null && isOrthographic)
-        {
-            float camx = transform.position.z;
-            float camy = transform.position.y;
-            float tpx = targetObject.position.z;
-            float tpy = targetObject.position.y;
-            Debug.Log(dist(camx, camy, tpx, tpy));
-            Debug.Log($"camx: {camx}, camy: {camy}, tpx: {tpx}, tpy: {tpy}");
-            // Calculate target location with the relative offset
-            Vector3 targetPosition;
-            if (dist(camx, camy, tpx, tpy) > DeadpanRadius)
-            {
-                targetPosition = targetObject.position + CameraOrthoOffset;
-            } else
-            {
-                targetPosition = transform.position;
-            }
+    [SerializeField] private float DeadpanRadius = 1.5f;
 
-            // Smoothly glide the camera position toward the target position
-            transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref currentVelocity, smoothTime);
-        } else
-        {
-            if(!cam.orthographic) transform.position = targetObject.position;
-        }
-
-        
-    }
-
-    private CameraControls controls;
-    private Vector2 lookInput;
-    private float xRotation = 0f;
-    private float yRotation = 0f;
+    private Vector3 currentVelocity;
 
     public playerController playerControllerRef;
 
+    [SerializeField] public float mouseSensitivity = 50f;
 
+    public Transform playerBody;
 
-    void Awake()
+    [SerializeField] private Transform targetObject;
+
+    private Vector2 lookInput;
+    private float xRotation;
+    private float yRotation;
+
+    private void Awake()
     {
         cam = GetComponent<Camera>();
-        isOrthographic = cam.orthographic;
         controls = new CameraControls();
+
+        isOrthographic = cam.orthographic;
+        currentT = isOrthographic ? 1f : 0f;
+
+        // Preserve the initial perspective look direction.
+        Vector3 initialRotation = transform.eulerAngles;
+
+        xRotation = Mathf.DeltaAngle(0f, initialRotation.x);
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+        yRotation = initialRotation.y;
     }
-
-    public void OnPerspchange(InputValue value)
-    {
-        if (value.isPressed)
-        {
-            ToggleProjection();
-        }
-    }
-
-    [SerializeField] public float mouseSensitivity = 50f;
-    public Transform playerBody; // Assign your parent player object here if doing First Person
-
-
-
 
     private void OnEnable()
     {
@@ -93,140 +63,268 @@ public class Camera_Persp_Change : MonoBehaviour
     private void OnDisable()
     {
         controls.Disable();
+
+        if (blendCoroutine != null)
+        {
+            StopCoroutine(blendCoroutine);
+            blendCoroutine = null;
+        }
+
+        isTransitioning = false;
+
+        // Restore a native projection if disabled during a transition.
+        if (cam != null)
+        {
+            cam.orthographic = isOrthographic;
+            currentT = isOrthographic ? 1f : 0f;
+            cam.ResetProjectionMatrix();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        controls?.Dispose();
     }
 
     private void Start()
     {
-        // Lock cursor to the center of the screen and hide it
-        isOrthographic = !isOrthographic;
-        ToggleProjection();
-        Cursor.lockState = CursorLockMode.Locked;
-    }
+        if (targetObject == null)
+            targetObject = playerBody;
 
-
-
-    [SerializeField] private Transform targetObject;
-
-    Vector3 targetPosition;
-    Vector3 cameraPosition;
-    Vector3 cameraRotation;
-    void Update()
-    {
-
-        float mouseX = lookInput.x * mouseSensitivity * Time.deltaTime;
-        float mouseY = lookInput.y * mouseSensitivity * Time.deltaTime;
-
-        // Read the Vector2 Delta value from the mouse
-        lookInput = controls.CamLook3D.CamMouse.ReadValue<Vector2>();
-
-
-
-        // Calculate vertical rotation and clamp it so you can't look upside down
-
-
-        if (targetObject != null)
+        if (targetObject == null)
         {
-            // Access the position vector (X, Y, Z)
-            targetPosition = targetObject.position;
-           
+            Debug.LogError(
+                "Camera_Persp_Change: Assign Target Object or Player Body.",
+                this
+            );
+
+            enabled = false;
+            return;
         }
+
+        // Initialize directly in the Camera component's selected mode.
         if (isOrthographic)
         {
-            cameraPosition = targetPosition + CameraOrthoOffset;
-        } else
-        {
-            xRotation -= mouseY;
-            xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-            yRotation += mouseX;
-            yRotation = yRotation % 360;
+            transform.position =
+                targetObject.position + CameraOrthoOffset;
 
-            transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
-            //transform.Rotate(Vector3.up * mouseX, Space.World);
+            transform.rotation = Quaternion.Euler(0f, -90f, 0f);
+        }
+        else
+        {
+            transform.position = targetObject.position;
+            transform.rotation =
+                Quaternion.Euler(xRotation, yRotation, 0f);
         }
 
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
 
+    public void OnPerspchange(InputValue value)
+    {
+        if (value.isPressed)
+            ToggleProjection();
+    }
 
+    private void Update()
+    {
+        if (targetObject == null ||
+            isOrthographic ||
+            isTransitioning)
+        {
+            return;
+        }
 
+        lookInput = controls.CamLook3D.CamMouse.ReadValue<Vector2>();
 
+        float mouseX =
+            lookInput.x * mouseSensitivity * Time.deltaTime;
+
+        float mouseY =
+            lookInput.y * mouseSensitivity * Time.deltaTime;
+
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+        yRotation += mouseX;
+        yRotation %= 360f;
+
+        transform.rotation =
+            Quaternion.Euler(xRotation, yRotation, 0f);
+    }
+
+    private void LateUpdate()
+    {
+        if (targetObject == null || isTransitioning)
+            return;
+
+        if (isOrthographic)
+        {
+            float distance = Vector2.Distance(
+                new Vector2(
+                    transform.position.z,
+                    transform.position.y
+                ),
+                new Vector2(
+                    targetObject.position.z,
+                    targetObject.position.y
+                )
+            );
+
+            if (distance > DeadpanRadius)
+            {
+                Vector3 desiredPosition =
+                    targetObject.position + CameraOrthoOffset;
+
+                transform.position = Vector3.SmoothDamp(
+                    transform.position,
+                    desiredPosition,
+                    ref currentVelocity,
+                    Mathf.Max(0.001f, smoothTime)
+                );
+            }
+            else
+            {
+                currentVelocity = Vector3.zero;
+            }
+        }
+        else
+        {
+            transform.position = targetObject.position;
+        }
     }
 
     public void ToggleProjection()
     {
-        if (blendCoroutine != null) StopCoroutine(blendCoroutine);
+        if (targetObject == null)
+            return;
+
+        if (blendCoroutine != null)
+            StopCoroutine(blendCoroutine);
+
         isOrthographic = !isOrthographic;
-        blendCoroutine = StartCoroutine(BlendProjection(isOrthographic ? 1f : 0f));
+        currentVelocity = Vector3.zero;
+
+        blendCoroutine = StartCoroutine(
+            BlendProjection(isOrthographic ? 1f : 0f)
+        );
     }
 
-    private System.Collections.IEnumerator BlendProjection(float targetT)
+    private IEnumerator BlendProjection(float targetT)
     {
+        isTransitioning = true;
+
         float startT = currentT;
-        float time = 0;
+        float elapsed = 0f;
 
-        // Calculate the base matrices for both modes
-        Matrix4x4 perspectiveMatrix = GetPerspectiveMatrix();
-        Matrix4x4 orthoMatrix = GetOrthoMatrix();
-        Vector3 PrevCamRot = new Vector3(xRotation,yRotation,0.0f);
+        Vector3 startPosition = transform.position;
+        Quaternion startRotation = transform.rotation;
 
-        while (time < duration)
+        Matrix4x4 startProjection = cam.projectionMatrix;
+
+        Matrix4x4 endProjection = isOrthographic
+            ? GetOrthoMatrix()
+            : GetPerspectiveMatrix();
+
+        Quaternion endRotation = isOrthographic
+            ? Quaternion.Euler(0f, -90f, 0f)
+            : Quaternion.Euler(xRotation, yRotation, 0f);
+
+        float transitionDuration = Mathf.Max(0.001f, duration);
+
+        while (elapsed < transitionDuration)
         {
+            elapsed += Time.deltaTime;
 
-            time += Time.deltaTime;
-            float rawT = Mathf.Clamp01(time / duration);
+            float progress = Mathf.Clamp01(
+                elapsed / transitionDuration
+            );
 
+            float smoothProgress =
+                Mathf.SmoothStep(0f, 1f, progress);
 
+            currentT = Mathf.Lerp(
+                startT,
+                targetT,
+                smoothProgress
+            );
 
-            // SmoothStep yields cleaner transitions on matrix curves than linear lerping
-            float smoothedT = Mathf.SmoothStep(startT, targetT, rawT);
-            currentT = smoothedT;
+            Vector3 endPosition = isOrthographic
+                ? targetObject.position + CameraOrthoOffset
+                : targetObject.position;
 
-            //change cam rot & pos
-            transform.rotation = Quaternion.Euler(PrevCamRot.x * (1-smoothedT), (PrevCamRot.y * (1-smoothedT)) + (-90 * smoothedT), 0);
-            transform.position = VectorLerp(targetPosition, cameraPosition, smoothedT);
+            transform.position = Vector3.Lerp(
+                startPosition,
+                endPosition,
+                smoothProgress
+            );
 
-            // Linearly interpolate the individual values inside the matrix row by row
-            cam.projectionMatrix = MatrixLerp(perspectiveMatrix, orthoMatrix, smoothedT);
+            transform.rotation = Quaternion.Slerp(
+                startRotation,
+                endRotation,
+                smoothProgress
+            );
+
+            cam.projectionMatrix = MatrixLerp(
+                startProjection,
+                endProjection,
+                smoothProgress
+            );
+
             yield return null;
         }
 
-        // Snap fully to native settings at the end of the transition to clear cache/artifacts
         currentT = targetT;
+
         cam.orthographic = isOrthographic;
         cam.ResetProjectionMatrix();
-        xRotation = 0.0f;
-        yRotation = 0.0f;
+
+        transform.position = isOrthographic
+            ? targetObject.position + CameraOrthoOffset
+            : targetObject.position;
+
+        transform.rotation = endRotation;
+
+        isTransitioning = false;
+        blendCoroutine = null;
     }
 
     private Matrix4x4 GetPerspectiveMatrix()
     {
-        // Re-creates the native matrix from current aspect, FOV, and near/far clip planes
-        return Matrix4x4.Perspective(cam.fieldOfView, cam.aspect, cam.nearClipPlane, cam.farClipPlane);
+        return Matrix4x4.Perspective(
+            cam.fieldOfView,
+            cam.aspect,
+            cam.nearClipPlane,
+            cam.farClipPlane
+        );
     }
 
     private Matrix4x4 GetOrthoMatrix()
     {
-        // Re-creates the native matrix from current orthographic bounds
         float orthoHeight = cam.orthographicSize;
         float orthoWidth = orthoHeight * cam.aspect;
-        return Matrix4x4.Ortho(-orthoWidth, orthoWidth, -orthoHeight, orthoHeight, cam.nearClipPlane, cam.farClipPlane);
+
+        return Matrix4x4.Ortho(
+            -orthoWidth,
+            orthoWidth,
+            -orthoHeight,
+            orthoHeight,
+            cam.nearClipPlane,
+            cam.farClipPlane
+        );
     }
 
-    private Matrix4x4 MatrixLerp(Matrix4x4 from, Matrix4x4 to, float t)
+    private Matrix4x4 MatrixLerp(
+        Matrix4x4 from,
+        Matrix4x4 to,
+        float t)
     {
-        Matrix4x4 blended = new Matrix4x4();
+        Matrix4x4 result = new Matrix4x4();
+
         for (int i = 0; i < 16; i++)
-        {
-            blended[i] = Mathf.Lerp(from[i], to[i], t);
-        }
-        return blended;
-    }
+            result[i] = Mathf.Lerp(from[i], to[i], t);
 
-    private Vector3 VectorLerp(Vector3 from, Vector3 to, float t)
-    {
-        Vector3 blended = new Vector3();
-        for (int i = 0; i < 3; i++)
-        {
-            blended[i] = Mathf.Lerp(from[i], to[i], t);
-        }
-        return blended;
+        return result;
     }
 }
