@@ -18,7 +18,7 @@ public class Camera_Persp_Change : MonoBehaviour
 
     private CameraControls controls;
     private Vector2 lookInput;
-    public float xRotation = 0f;
+    private float xRotation = 0f;
     private float yRotation = 0f;
 
 
@@ -88,7 +88,7 @@ public class Camera_Persp_Change : MonoBehaviour
             // Access the position vector (X, Y, Z)
             targetPosition = targetObject.position;
 
-            Debug.Log("Target Position: " + targetPosition);
+            //Debug.Log("Target Position: " + targetPosition);
         }
         if (isOrthographic)
         {

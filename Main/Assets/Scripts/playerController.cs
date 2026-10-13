@@ -17,8 +17,7 @@ public class playerController : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private LayerMask groundLayer;
-    [Header("Wall Check")]
-    [SerializeField] private float wallCheckRadius = 0.2f;
+
     [Header("Better Jump")]
     [SerializeField] private float fallMultiplier = 2.5f;
     private bool isGrounded;
@@ -51,16 +50,19 @@ public class playerController : MonoBehaviour
         if (isOrtho)
         {
             movement2D = PlayerControls.Player2D.Move.ReadValue<Vector2>();
+            rigidBody.constraints = RigidbodyConstraints.FreezePositionX |
+                                    RigidbodyConstraints.FreezeRotationX |
+                                    RigidbodyConstraints.FreezeRotationY |
+                                    RigidbodyConstraints.FreezeRotationZ;
         } else
         {
             movement3D = PlayerControls.Player3D.Move.ReadValue<Vector3>();
+            rigidBody.constraints &= ~RigidbodyConstraints.FreezePositionX;
         }
     }
     private void checkIsGrounded()
     {
-        Vector3 pos0 = groundCheck.position + new Vector3(-0.5f, 0f, 0f);
-        Vector3 pos1 = groundCheck.position + new Vector3(0.5f, 0f, 0f);
-        isGrounded = (Physics.OverlapCapsule(pos0,pos1, groundCheckRadius, groundLayer).Length > 0) ? true : false;
+        isGrounded = (Physics.OverlapSphere(groundCheck.position, groundCheckRadius, groundLayer).Length > 0) ? true : false;
     }
 
     
