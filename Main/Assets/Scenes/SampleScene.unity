@@ -379,6 +379,8 @@ MonoBehaviour:
   mouseSensitivity: 35
   duration: 1
   currentT: 0
+  xRotation: 0
+  yRotation: 0
 --- !u!114 &330585549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -756,7 +758,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1174451118}
-  m_Material: {fileID: 13400000, guid: 9033e7890c502d546b2d27c5a8994324, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -951,7 +953,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1472523612}
-  m_Material: {fileID: 13400000, guid: 9033e7890c502d546b2d27c5a8994324, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1250,6 +1252,7 @@ MonoBehaviour:
     m_Bits: 8
   fallMultiplier: 0.5
   linearVelocity: {x: 0, y: 0, z: 0}
+  playerDirection: 0
 --- !u!114 &1508091186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1428,7 +1431,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1571133346}
-  m_Material: {fileID: 13400000, guid: 9033e7890c502d546b2d27c5a8994324, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1540,7 +1543,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1594931653}
-  m_Material: {fileID: 13400000, guid: 9033e7890c502d546b2d27c5a8994324, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1652,7 +1655,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1606612948}
-  m_Material: {fileID: 13400000, guid: 9033e7890c502d546b2d27c5a8994324, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
