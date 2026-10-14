@@ -159,7 +159,7 @@ public class playerController : MonoBehaviour
             float zmove = -movement3D.x * camSin + movement3D.z * camCos;
 
             rigidBody.linearVelocity = new Vector3(xmove * moveSpeed, rigidBody.linearVelocity.y, zmove * moveSpeed);
-            Debug.Log(Camera_Persp_ChangeRef.yRotation);
+            //Debug.Log(Camera_Persp_ChangeRef.yRotation);
             float yrot = Camera_Persp_ChangeRef.yRotation;
             if (((yrot < -90) && (yrot > -270)) || ((yrot) > 90) && (yrot < 270))
             {

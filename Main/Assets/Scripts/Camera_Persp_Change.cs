@@ -21,7 +21,7 @@ public class Camera_Persp_Change : MonoBehaviour
     [Header("Transition Settings")]
     public float duration = 1f;
     [Range(0f, 1f)] public float currentT = 0f;
-
+    public float globalSquishFactor = 0;
     // Internal State
     private Camera cam;
     private CameraControls controls;
@@ -120,6 +120,7 @@ public class Camera_Persp_Change : MonoBehaviour
                     desired2D.x
                 );
 
+
                 // 6. Smoothly damp to the new 3D position
                 transform.position = Vector3.SmoothDamp(
                     transform.position,
@@ -170,6 +171,7 @@ public class Camera_Persp_Change : MonoBehaviour
         isTransitioning = true;
 
         float startT = currentT;
+        globalSquishFactor = currentT;
         float elapsed = 0f;
 
         Vector3 startPosition = transform.position;
@@ -198,9 +200,11 @@ public class Camera_Persp_Change : MonoBehaviour
             cam.projectionMatrix = MatrixLerp(startProjection, endProjection, smoothProgress);
 
             yield return null;
+            globalSquishFactor = currentT;
         }
 
         currentT = targetT;
+        globalSquishFactor = currentT;
         cam.orthographic = isOrthographic;
         cam.ResetProjectionMatrix();
 
