@@ -25,17 +25,17 @@ public class CombatHealth : MonoBehaviour
 
         if (isPlayer)
         {
-            playerController movement = GetComponent<playerController>();
-
+            playerController movement = GetComponentInChildren<playerController>();
+           
             if (movement != null)
                 movement.enabled = false;
 
-            LightningAttack attack = GetComponent<LightningAttack>();
+            LightningAttack attack = GetComponentInChildren<LightningAttack>();
 
             if (attack != null)
                 attack.enabled = false;
 
-            Rigidbody body = GetComponent<Rigidbody>();
+            Rigidbody body = GetComponentInChildren<Rigidbody>();
 
             if (body != null)
             {

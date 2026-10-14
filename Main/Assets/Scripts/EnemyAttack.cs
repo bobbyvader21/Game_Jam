@@ -58,7 +58,7 @@ public class EnemyAttack : MonoBehaviour
     {
         CombatHealth[] allHealth =
             FindObjectsByType<CombatHealth>(
-                FindObjectsSortMode.None
+                FindObjectsInactive.Exclude
             );
 
         foreach (CombatHealth candidate in allHealth)
@@ -68,10 +68,11 @@ public class EnemyAttack : MonoBehaviour
 
             player = candidate;
 
-            playerCollider = player.GetComponent<Collider>();
+            playerCollider = player.GetComponentInChildren<Collider>();
 
-            projection =
-                player.GetComponentInChildren<Camera_Persp_Change>();
+            projection = player.GetComponentInChildren<Camera_Persp_Change>();
+            
+
 
             break;
         }

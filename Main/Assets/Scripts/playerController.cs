@@ -29,6 +29,7 @@ public class playerController : MonoBehaviour
     private float jumpBufferTime = 0f;
 
     public Vector3 linearVelocity = new Vector3(0f, 0f, 0f);
+    public int playerDirection;
 
     private void Awake()
     {
@@ -48,7 +49,10 @@ public class playerController : MonoBehaviour
         PlayerControls.Disable();
     }
 
-
+    private void Start()
+    {
+        playerDirection = 0;
+    }
 
     private void PlayerInput(bool isOrtho)
     {
@@ -134,6 +138,14 @@ public class playerController : MonoBehaviour
                 playerCollider.material.staticFriction = 0f;
                 playerCollider.material.frictionCombine = PhysicsMaterialCombine.Minimum;
             }
+
+            if(movement2D.x == 1)
+            {
+                playerDirection = 1;
+            } else if(movement2D.x == -1)
+            {
+                playerDirection = 0;
+            }
             rigidBody.linearVelocity = new Vector3(rigidBody.linearVelocity.x, rigidBody.linearVelocity.y, -1 * movement2D.x * moveSpeed);
             //Debug.Log(movement2D);
         }
@@ -147,7 +159,16 @@ public class playerController : MonoBehaviour
             float zmove = -movement3D.x * camSin + movement3D.z * camCos;
 
             rigidBody.linearVelocity = new Vector3(xmove * moveSpeed, rigidBody.linearVelocity.y, zmove * moveSpeed);
-
+            Debug.Log(Camera_Persp_ChangeRef.yRotation);
+            float yrot = Camera_Persp_ChangeRef.yRotation;
+            if (((yrot < -90) && (yrot > -270)) || ((yrot) > 90) && (yrot < 270))
+            {
+                playerDirection = 1;
+            }
+            else 
+            {
+                playerDirection = 0;
+            }
         }
     }
 
