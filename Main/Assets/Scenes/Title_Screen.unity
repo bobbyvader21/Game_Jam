@@ -513,9 +513,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 320080777}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9d4147869792314ba0ecd2d9e728850, type: 3}
+  m_Script: {fileID: 11500000, guid: d8896d5a8abce7b498de5501672d265e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  SampleScene: SampleScene
 --- !u!1 &987942445
 GameObject:
   m_ObjectHideFlags: 0
