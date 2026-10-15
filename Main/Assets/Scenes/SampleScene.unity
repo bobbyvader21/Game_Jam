@@ -506,16 +506,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 387283513}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5.88, y: 5.88, z: 5.88}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.00006705523}
+  m_LocalScale: {x: 5.8799996, y: 5.8800006, z: 5.8799996}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 1251445874}
+  m_Father: {fileID: 1191833786}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -673, y: -300}
+  m_AnchoredPosition: {x: -378.99548, y: -0.00024414062}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &387283515
@@ -1032,7 +1032,6 @@ GameObject:
   m_Component:
   - component: {fileID: 909940661}
   - component: {fileID: 909940660}
-  - component: {fileID: 909940659}
   - component: {fileID: 909940658}
   m_Layer: 0
   m_Name: PlayerGunOverlayCamera
@@ -1085,14 +1084,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!81 &909940659
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 909940657}
-  m_Enabled: 1
 --- !u!20 &909940660
 Camera:
   m_ObjectHideFlags: 0
@@ -1302,6 +1293,43 @@ Transform:
   m_Children: []
   m_Father: {fileID: 198887086}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1191833785
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1191833786}
+  m_Layer: 5
+  m_Name: PlayerWeapon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1191833786
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1191833785}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 387283514}
+  - {fileID: 1536782408}
+  m_Father: {fileID: 1251445874}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -294, y: -300}
+  m_SizeDelta: {x: 1346, y: 588}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1223049842
 GameObject:
   m_ObjectHideFlags: 0
@@ -1399,7 +1427,7 @@ GameObject:
   - component: {fileID: 1251445872}
   - component: {fileID: 1251445871}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Player Hand Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1481,8 +1509,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 387283514}
-  - {fileID: 1536782408}
+  - {fileID: 1191833786}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1707,10 +1734,10 @@ GameObject:
   - component: {fileID: 1508091182}
   - component: {fileID: 1508091184}
   - component: {fileID: 1508091185}
-  - component: {fileID: 1508091186}
   - component: {fileID: 1508091188}
   - component: {fileID: 1508091189}
   - component: {fileID: 1508091190}
+  - component: {fileID: 1508091191}
   m_Layer: 6
   m_Name: TempPlayer
   m_TagString: Untagged
@@ -1850,18 +1877,6 @@ MonoBehaviour:
   fallMultiplier: 0.5
   linearVelocity: {x: 0, y: 0, z: 0}
   playerDirection: 0
---- !u!114 &1508091186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1508091177}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 518e5e5e72c21df4db45507b23c630cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerWallStop
 --- !u!114 &1508091188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1960,7 +1975,7 @@ Animator:
   m_GameObject: {fileID: 1508091177}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: acf8e33026545bc40813b0efb774d42c, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1972,6 +1987,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1508091191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1508091177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b52f949d882f844f93cd717a80458c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimationController
+  playerControllerScript: {fileID: 1508091185}
 --- !u!1 &1536782407
 GameObject:
   m_ObjectHideFlags: 0
@@ -1997,16 +2025,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1536782407}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -5.88, y: 5.88, z: 5.88}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.00006705523}
+  m_LocalScale: {x: -5.8799996, y: 5.8800006, z: 5.8799996}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1251445874}
+  m_Father: {fileID: 1191833786}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 673, y: -300}
+  m_AnchoredPosition: {x: 967.0045, y: -0.00024414062}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1536782409
