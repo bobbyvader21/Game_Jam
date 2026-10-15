@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 51203861}
   - component: {fileID: 51203864}
   m_Layer: 5
-  m_Name: Settings Button
+  m_Name: SettingsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -203,16 +203,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Quit_Logic, Assembly-CSharp
-        m_MethodName: Quit_Game
-        m_Mode: 1
+      - m_Target: {fileID: 51203864}
+        m_TargetAssemblyTypeName: UpdateCell, Assembly-CSharp
+        m_MethodName: SetText
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: Not in this Economy!
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &51203862
@@ -262,9 +262,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 51203859}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb72f10d2c5702b4aad4b4d0be0c9b1a, type: 3}
+  m_Script: {fileID: 11500000, guid: 8f82817c0e7d7c34294089ef789640df, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::UpdateCell
+  Textfield: {fileID: 1184757840}
 --- !u!1 &227189068
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,7 +281,7 @@ GameObject:
   - component: {fileID: 227189074}
   - component: {fileID: 227189073}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: MainMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -706,7 +707,7 @@ GameObject:
   - component: {fileID: 1184757841}
   - component: {fileID: 1184757840}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Settings_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -728,8 +729,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.37602997, y: 0.099980354}
+  m_SizeDelta: {x: -12.36414, y: -7.02428}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1184757840
 MonoBehaviour:
@@ -778,12 +779,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 20.55
+  m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 6
+  m_fontSizeMax: 35.8
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -794,8 +795,8 @@ MonoBehaviour:
   m_lineSpacing: 0
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
-  m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
+  m_charWidthMaxAdj: 2.45
+  m_TextWrappingMode: 2
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
