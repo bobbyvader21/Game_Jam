@@ -156,6 +156,7 @@ public class Camera_Persp_Change : MonoBehaviour
             StopCoroutine(blendCoroutine);
 
         isOrthographic = !isOrthographic;
+        Enable3DVisuals.Instance.SetEnable3DObjects(!isOrthographic);
         currentVelocity = Vector3.zero;
 
         blendCoroutine = StartCoroutine(BlendProjection(isOrthographic ? 1f : 0f));
