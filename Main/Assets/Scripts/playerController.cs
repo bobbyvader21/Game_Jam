@@ -21,6 +21,7 @@ public class playerController : MonoBehaviour
     [Header("Better Jump")]
     [SerializeField] private float fallMultiplier = 2.5f;
     private bool isGrounded;
+    private bool isJumping;
     private PlayerMovement PlayerControls;
     private Vector2 movement2D;
     private Vector3 movement3D;
@@ -30,6 +31,10 @@ public class playerController : MonoBehaviour
 
     public Vector3 linearVelocity = new Vector3(0f, 0f, 0f);
     public int playerDirection;
+
+    public bool IsGrounded { get => isGrounded; }
+    public Vector2 Movement2D { get => movement2D;}
+    public bool IsJumping { get => isJumping; }
 
     private void Awake()
     {
@@ -71,7 +76,7 @@ public class playerController : MonoBehaviour
     }
     private void checkIsGrounded()
     {
-        isGrounded = (Physics.OverlapSphere(groundCheck.position, groundCheckRadius, groundLayer).Length > 0) ? true : false;
+        isGrounded = Physics.OverlapSphere(groundCheck.position, groundCheckRadius, groundLayer).Length > 0;
     }
 
     
@@ -102,6 +107,9 @@ public class playerController : MonoBehaviour
         }
     }
     private Vector3 camAngle;
+
+    
+
     private Vector3 getCamAngle()
     {
         if(Cam != null)
@@ -118,6 +126,7 @@ public class playerController : MonoBehaviour
         {
             if (Camera_Persp_ChangeRef.isOrthographic && (jumpBufferTime < 0.1))
             {
+                isJumping = movement2D.y > 0 && isGrounded;
                 if (movement2D.y > 0)
                 {
                     rigidBody.linearVelocity = new Vector3(rigidBody.linearVelocity.x, JumpForce, rigidBody.linearVelocity.z);
