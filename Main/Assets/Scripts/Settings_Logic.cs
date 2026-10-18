@@ -1,28 +1,19 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 public class UpdateCell : MonoBehaviour
 {
-    public TextMeshProUGUI Textfield;
-
-    //Toggle State
-    private bool isOriginalText = true;
-    public void ToggleText()
+    public GameObject panel;
+    public bool toggle = false;
+    //public GameObject panel;
+    
+    public void Open_Settings()
     {
-        if (isOriginalText)
-        {
-            Textfield.text = "Clicked!";
-        }
-        else
-        {
-            Textfield.text = "Settings";
-        }
-
-        isOriginalText = !isOriginalText;
-    }
-    public void SetText(string text)
-    {
-        Textfield.text = text;
+        
+        panel.SetActive(true);
+        
+        //GameObject.FindGameObjectWithTag("Settings_Menu").SetActive(true);
     }
 
 
