@@ -43,9 +43,9 @@ GameObject:
   - component: {fileID: 2888871989892997522}
   - component: {fileID: 6720249160232364872}
   - component: {fileID: 8029821660297100623}
-  - component: {fileID: 5926811526580202629}
   - component: {fileID: 2215613739234472681}
   - component: {fileID: -469818370267009232}
+  - component: {fileID: 4997230749847782185}
   m_Layer: 7
   m_Name: LightningEnemy
   m_TagString: Untagged
@@ -147,20 +147,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5926811526580202629
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8878976644999031992}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f2140099aa974b718f05ea7fd67e20e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CombatHealth
-  maxHealth: 100
-  isPlayer: 0
 --- !u!114 &2215613739234472681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,3 +198,17 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 2
+--- !u!114 &4997230749847782185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8878976644999031992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8499d39ec8929a4cbd2245f2c3339bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  health: 100
+  maxHealth: 100

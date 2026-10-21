@@ -4,6 +4,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 {
     [SerializeField] private PlayerAttributes playerAttributes;
 
+
+    public bool IsDead => playerAttributes.Health <= 0f;
     private PlayerAnimationController playerAnimationController;
     private playerController playerController;
     private LightningAttack lightningAttack;

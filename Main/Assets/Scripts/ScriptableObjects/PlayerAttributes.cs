@@ -27,10 +27,6 @@ public class PlayerAttributes : ScriptableObject
     public Action OnDeath { get => onDeath; set => onDeath = value; }
     public Action<float> OnHealthChanged { get => onHealthChanged; set => onHealthChanged = value; }
 
-    private void OnEnable()
-    {
-        health = maxHealth;
-    }
     private void OnDisable()
     {
         onHealthChanged = null;

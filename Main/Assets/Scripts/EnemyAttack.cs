@@ -1,7 +1,8 @@
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
-[RequireComponent(typeof(CombatHealth))]
+// enemy attack should not be caring about if they're dead, that is handled by the enemy health script
 public class EnemyAttack : MonoBehaviour
 {
     [Header("References")]
@@ -22,8 +23,8 @@ public class EnemyAttack : MonoBehaviour
     public float contactDamage = 10f;
     public float contactInterval = 1f;
 
-    private CombatHealth health;
-    private CombatHealth player;
+    private EnemyHealth health;
+    private PlayerHealth player;
     private Camera_Persp_Change projection;
     private Collider playerCollider;
 
@@ -36,8 +37,6 @@ public class EnemyAttack : MonoBehaviour
 
     private void Awake()
     {
-        health = GetComponent<CombatHealth>();
-
         GameObject beamObject = new GameObject("Enemy Beam");
         beamObject.transform.SetParent(transform, false);
 
@@ -56,26 +55,9 @@ public class EnemyAttack : MonoBehaviour
 
     private void Start()
     {
-        CombatHealth[] allHealth =
-            FindObjectsByType<CombatHealth>(
-                FindObjectsInactive.Exclude
-            );
-
-        foreach (CombatHealth candidate in allHealth)
-        {
-            if (!candidate.isPlayer)
-                continue;
-
-            player = candidate;
-
-            playerCollider = player.GetComponentInChildren<Collider>();
-
-            projection = player.GetComponentInChildren<Camera_Persp_Change>();
-            
-
-
-            break;
-        }
+        player = FindAnyObjectByType<PlayerHealth>(FindObjectsInactive.Include);
+        playerCollider = player.GetComponentInChildren<Collider>();
+        projection = player.GetComponentInChildren<Camera_Persp_Change>();
 
         if (player == null || projection == null)
         {
@@ -89,10 +71,7 @@ public class EnemyAttack : MonoBehaviour
     private bool CanShoot()
     {
         return
-            !health.IsDead &&
-            player != null &&
             !player.IsDead &&
-            projection != null &&
             !projection.isOrthographic &&
             projection.currentT <= 0.001f;
     }
@@ -143,11 +122,11 @@ public class EnemyAttack : MonoBehaviour
             return;
         }
 
-        CombatHealth hitHealth =
-            hit.collider.GetComponentInParent<CombatHealth>();
+        IDamageable hitHealth =
+            hit.collider.GetComponentInParent<IDamageable>();
 
         // Only shoot when there is a clear line to the player.
-        if (hitHealth != player)
+        if ((PlayerHealth)hitHealth != player)
             return;
 
         nextAttackTime =
@@ -203,7 +182,7 @@ public class EnemyAttack : MonoBehaviour
 
     private void TryContactDamage(Collision collision)
     {
-        if (health.IsDead || Time.time < nextContactTime)
+        if (Time.time < nextContactTime) 
             return;
 
         CombatHealth touchingHealth =
