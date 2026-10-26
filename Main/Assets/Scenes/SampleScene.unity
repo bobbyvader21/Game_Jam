@@ -2699,11 +2699,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1727342832}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f2140099aa974b718f05ea7fd67e20e, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ee19909e3684d5488f5b58298c20fd5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CombatHealth
-  maxHealth: 1000
-  isPlayer: 1
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  playerAttributes: {fileID: 11400000, guid: 338a1ea45308b4440baf9732a065abc9, type: 2}
 --- !u!1001 &1772582199
 PrefabInstance:
   m_ObjectHideFlags: 0

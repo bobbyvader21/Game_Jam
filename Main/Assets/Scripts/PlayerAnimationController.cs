@@ -28,7 +28,6 @@ public class PlayerAnimationController : MonoBehaviour
     }
     private void FlipCharacter()
     {
-        // Flip using local scale so attached colliders/checkers flip too
         if (playerRigidbody.linearVelocity.z > 0.1f)
             spriteRenderer.flipX = false;
         else if (playerRigidbody.linearVelocity.z < -0.1f)

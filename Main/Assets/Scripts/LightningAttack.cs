@@ -31,19 +31,15 @@ public class LightningAttack : MonoBehaviour
 
     private LineRenderer leftBolt;
     private LineRenderer rightBolt;
-    private CombatHealth health;
 
     private bool CanAttack =>
         aimCamera != null &&
         projection != null &&
         !projection.isOrthographic &&
-        projection.currentT <= 0.001f &&
-        (health == null || !health.IsDead);
+        projection.currentT <= 0.001f;
 
     private void Awake()
     {
-        health = GetComponent<CombatHealth>();
-
         leftBolt = CreateBolt("Left Lightning");
         rightBolt = CreateBolt("Right Lightning");
     }
@@ -124,35 +120,30 @@ public class LightningAttack : MonoBehaviour
         {
             impactPoint = impact.point;
 
-            CombatHealth target =
-                impact.collider.GetComponentInParent<CombatHealth>();
+            GameObject target = impact.collider.gameObject;
 
-            if (target != null && target != health)
+            if (target != null)
             {
-                Rigidbody targetBody = target.GetComponent<Rigidbody>();
-
-                if (targetBody != null &&
-                    !targetBody.isKinematic &&
-                    Time.time >= nextKnockbackTime)
+                if (target.TryGetComponent(out IDamageable damageable))
+                {
+                    damageable.TakeDamage(damagePerSecond * Time.deltaTime);
+                }
+                if (target.TryGetComponent(out Rigidbody rigidbody) && !rigidbody.isKinematic && Time.time >= nextKnockbackTime)
                 {
                     Vector3 pushDirection = aimRay.direction;
-
                     // Push along the floor rather than into it.
                     pushDirection.y = 0f;
-
                     if (pushDirection.sqrMagnitude > 0.0001f)
                     {
-                        targetBody.AddForce(
+                        rigidbody.AddForce(
                             pushDirection.normalized * knockbackImpulse,
                             ForceMode.Impulse
                         );
-
                         nextKnockbackTime =
                             Time.time + Mathf.Max(0.01f, knockbackInterval);
                     }
                 }
 
-                target.TakeDamage(damagePerSecond * Time.deltaTime);
             }
         }
 
@@ -193,27 +184,5 @@ public class LightningAttack : MonoBehaviour
 
         if (handsRoot != null)
             handsRoot.gameObject.SetActive(false);
-    }
-
-    private void OnGUI()
-    {
-        if (!CanAttack)
-            return;
-
-        GUIStyle style = new GUIStyle(GUI.skin.label);
-        style.alignment = TextAnchor.MiddleCenter;
-        style.fontSize = 24;
-        style.normal.textColor = Color.white;
-
-        GUI.Label(
-            new Rect(
-                Screen.width / 2f - 15,
-                Screen.height / 2f - 15,
-                30,
-                30
-            ),
-            "•",
-            style
-        );
     }
 }
