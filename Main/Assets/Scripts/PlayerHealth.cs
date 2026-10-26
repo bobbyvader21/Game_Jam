@@ -19,6 +19,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         lightningAttack = GetComponentInChildren<LightningAttack>();
         playerRigidbody = GetComponentInChildren<Rigidbody>();
         cameraPerspChange = GetComponentInChildren<Camera_Persp_Change>();
+        playerAttributes.Health = playerAttributes.MaxHealth;
     }
 
     private void OnEnable()
