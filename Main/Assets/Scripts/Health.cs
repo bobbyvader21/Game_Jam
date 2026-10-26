@@ -1,22 +1,22 @@
 using System;
 using UnityEngine;
 
-public class EnemyHealth : MonoBehaviour, IDamageable
+public class Health : MonoBehaviour, IDamageable
 {
-    [SerializeField] private float health;
+    [SerializeField] private float currentHealth;
     [SerializeField] private float maxHealth;
 
     private Action<float> onHealthChanged;
     private Action onDeath;
 
-    public float Health
+    public float CurrentHealth
     {
-        get => health;
+        get => currentHealth;
         set
         {
-            health = Mathf.Clamp(value, 0, maxHealth);
-            OnHealthChanged?.Invoke(health);
-            if (health <= 0)
+            currentHealth = Mathf.Clamp(value, 0, maxHealth);
+            OnHealthChanged?.Invoke(currentHealth);
+            if (currentHealth <= 0)
             {
                 OnDeath?.Invoke();
             }
@@ -29,7 +29,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     private void Start()
     {
-        Health = maxHealth;
+        CurrentHealth = maxHealth;
     }
 
     private void OnEnable()
@@ -50,12 +50,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     public void Heal(float amount)
     {
-        Health += amount;
+        CurrentHealth += amount;
     }
 
     public void TakeDamage(float damage)
     {
-        Health -= damage;
+        CurrentHealth -= damage;
     }
 }
     

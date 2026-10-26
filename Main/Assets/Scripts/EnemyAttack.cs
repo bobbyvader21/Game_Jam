@@ -23,7 +23,6 @@ public class EnemyAttack : MonoBehaviour
     public float contactDamage = 10f;
     public float contactInterval = 1f;
 
-    private EnemyHealth health;
     private PlayerHealth player;
     private Camera_Persp_Change projection;
     private Collider playerCollider;
