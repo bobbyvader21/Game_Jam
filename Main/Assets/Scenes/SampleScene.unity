@@ -196,6 +196,7 @@ GameObject:
   m_Component:
   - component: {fileID: 198887086}
   - component: {fileID: 198887088}
+  - component: {fileID: 198887089}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -246,6 +247,18 @@ MonoBehaviour:
   targetAnchor: {fileID: 1508091181}
   bufferDistance: 0.002
   boundsExpansion: 50
+--- !u!114 &198887089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 198887085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 602cd0685d813e2499a9d794eddad5df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BillboardEffectManager
 --- !u!1 &219025616
 GameObject:
   m_ObjectHideFlags: 0
