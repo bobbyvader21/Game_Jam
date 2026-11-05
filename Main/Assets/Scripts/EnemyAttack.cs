@@ -34,6 +34,8 @@ public class EnemyAttack : MonoBehaviour
     private float nextContactTime;
     private bool wasAllowedToAttack;
 
+    private Animator animator; 
+
     private void Awake()
     {
         GameObject beamObject = new GameObject("Enemy Beam");
@@ -54,6 +56,7 @@ public class EnemyAttack : MonoBehaviour
 
     private void Start()
     {
+        animator = GetComponent<Animator>();
         player = FindAnyObjectByType<PlayerHealth>(FindObjectsInactive.Include);
         playerCollider = player.GetComponentInChildren<Collider>();
         projection = player.GetComponentInChildren<Camera_Persp_Change>();
@@ -96,20 +99,23 @@ public class EnemyAttack : MonoBehaviour
         if (Time.time < nextAttackTime)
             return;
 
+        animator.SetTrigger("Attack");
+    }
+
+    public void FireBeam()
+    {
+        if (!CanShoot())
+            return;
         Vector3 start = firePoint != null
             ? firePoint.position
             : transform.position;
-
         Vector3 targetPoint = playerCollider != null
             ? playerCollider.bounds.center
             : player.transform.position;
-
         Vector3 direction = targetPoint - start;
         float distance = direction.magnitude;
-
         if (distance <= 0.001f || distance > attackRange)
             return;
-
         if (!Physics.Raycast(
             start,
             direction.normalized,
@@ -120,21 +126,14 @@ public class EnemyAttack : MonoBehaviour
         {
             return;
         }
-
         IDamageable hitHealth =
             hit.collider.GetComponentInParent<IDamageable>();
-
         // Only shoot when there is a clear line to the player.
         if ((PlayerHealth)hitHealth != player)
             return;
-
-        nextAttackTime =
-            Time.time + Mathf.Max(0.05f, attackInterval);
-
         ShowBeam(start, hit.point);
         player.TakeDamage(damage);
     }
-
     private void ShowBeam(Vector3 start, Vector3 end)
     {
         if (beamRoutine != null)
