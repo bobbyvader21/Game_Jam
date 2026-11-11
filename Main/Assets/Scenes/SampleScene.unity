@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 9ca22510633fbfd4399f1704cd9d5c72, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -300,6 +300,7 @@ GameObject:
   - component: {fileID: 330585547}
   - component: {fileID: 330585548}
   - component: {fileID: 330585549}
+  - component: {fileID: 330585550}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -448,12 +449,14 @@ MonoBehaviour:
   CameraOrthoOffset: {x: 2, y: 0, z: 0}
   smoothTime: 0.25
   DeadpanRadius: 0.25
-  mouseSensitivity: 35
+  mouseSensitivity: 15
   duration: 1
   currentT: 0
   globalSquishFactor: 0
   xRotation: 0
   yRotation: 0
+  fadeInDuration: 0.25
+  fadeOutDuration: 1
 --- !u!114 &330585549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -484,6 +487,20 @@ MonoBehaviour:
   m_DefaultActionMap: PerspChange
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &330585550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e99c0361b3c27ae4ab80e27ba6103275, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyboxSwitcher
+  Skybox2D: {fileID: 2100000, guid: 9ca22510633fbfd4399f1704cd9d5c72, type: 2}
+  Skybox3D: {fileID: 2100000, guid: 6f23ac6093edc164c912adff8a2f2b60, type: 2}
 --- !u!1 &387283513
 GameObject:
   m_ObjectHideFlags: 0
