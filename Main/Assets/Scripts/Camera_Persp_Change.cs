@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(SkyboxSwitcher))]
 [RequireComponent(typeof(Camera))]
 public class Camera_Persp_Change : MonoBehaviour
 {
@@ -25,32 +24,19 @@ public class Camera_Persp_Change : MonoBehaviour
     public float globalSquishFactor = 0;
     // Internal State
     private Camera cam;
-    private SkyboxSwitcher skyboxSwitcher;
     private CameraControls controls;
     private Coroutine blendCoroutine;
     private bool isTransitioning;
-    private bool isTransitioning2;
+
     private Vector3 currentVelocity = Vector3.zero;
     private Vector2 lookInput;
     public float xRotation = 0f;
     public float yRotation = 0f;
 
-    [Header("Datamosh Settings (More in PC_Renderer)")]
-    [Tooltip("How fast the datamosh fades in when pressed (seconds)")]
-    public float fadeInDuration = 0.25f;
-
-    [Tooltip("How fast the datamosh clears when released (seconds)")]
-    public float fadeOutDuration = 0.5f;
-
-    private float _currentBlend = 0f;
-
-
-
     private void Awake()
     {
         cam = GetComponent<Camera>();
         controls = new CameraControls();
-        skyboxSwitcher = GetComponent<SkyboxSwitcher>();
 
         isOrthographic = cam.orthographic;
         currentT = isOrthographic ? 1f : 0f;
@@ -89,16 +75,6 @@ public class Camera_Persp_Change : MonoBehaviour
 
     private void Update()
     {
-        bool isPressed = Mouse.current != null && Mouse.current.leftButton.isPressed;
-        float target = isTransitioning2 ? 1f : 0f;
-
-        float duration = isTransitioning2 ? fadeInDuration : fadeOutDuration;
-        float speed = (duration > 0.001f) ? (1f / duration) : 1000f;
-
-        _currentBlend = Mathf.MoveTowards(_currentBlend, target, speed * Time.deltaTime);
-
-        Shader.SetGlobalFloat("_Button", _currentBlend);
-
         if (targetObject == null || isOrthographic || isTransitioning)
             return;
 
@@ -114,8 +90,6 @@ public class Camera_Persp_Change : MonoBehaviour
         yRotation %= 360f;
 
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0f);
-
-
     }
 
     private void LateUpdate()
@@ -192,7 +166,6 @@ public class Camera_Persp_Change : MonoBehaviour
     {
         if (!isOrthographic)
         {
-            skyboxSwitcher.Set3DSkybox();
             xRotation = 0.0f;
             yRotation = 0.0f + (playerControllerRef.playerDirection) * -180;
         }
@@ -213,26 +186,6 @@ public class Camera_Persp_Change : MonoBehaviour
 
         while (elapsed < transitionDuration)
         {
-            if(elapsed < transitionDuration * 0.5f)
-            {
-
-                isTransitioning2 = true;
-            }
-            else
-            {
-                if (isTransitioning2)
-                {
-                    if (!isOrthographic)
-                    {
-                        skyboxSwitcher.Set3DSkybox();
-                    }
-                    else
-                    {
-                        skyboxSwitcher.Set2DSkybox();
-                    }
-                }
-                isTransitioning2 = false;
-            }
             elapsed += Time.deltaTime;
             float progress = Mathf.Clamp01(elapsed / transitionDuration);
             float smoothProgress = Mathf.SmoothStep(0f, 1f, progress);
