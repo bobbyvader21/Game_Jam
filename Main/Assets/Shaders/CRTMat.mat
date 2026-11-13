@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: CRTMat
+  m_Shader: {fileID: 4800000, guid: 5b298f3abfb18da44bfb10b9856bca5a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _Blend: 1
+    - _ChromaticAberration: 0.0015
+    - _Curvature: 0.15
+    - _PhosphorStrength: 0.166
+    - _ScanlineDensity: 240
+    - _ScanlineOpacity: 0.137
+    - _ScanlineSpeed: 2
+    - _ScreenResolutionX: 320
+    - _VignetteStrength: 0.16
+    m_Colors: []
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

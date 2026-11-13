@@ -1,5 +1,25 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-2924235164507019707
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
+  m_Name: CTR Renderer Feature
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FullScreenPassRendererFeature
+  m_Active: 1
+  injectionPoint: 600
+  fetchColorBuffer: 1
+  requirements: 0
+  passMaterial: {fileID: 2100000, guid: 6acffffce12237645bf61985f58648ef, type: 2}
+  passIndex: 0
+  bindDepthStencilAttachment: 0
+  m_Version: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27,7 +47,8 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: 7833122117494664109}
   - {fileID: 6428367071487821143}
-  m_RendererFeatureMap: ad6b866f10d7b46c5785d9e5ca253659l
+  - {fileID: -2924235164507019707}
+  m_RendererFeatureMap: ad6b866f10d7b46c5785d9e5ca2536594566da739c076bd7l
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_AssetVersion: 3
@@ -72,7 +93,7 @@ MonoBehaviour:
   settings:
     datamoshMaterial: {fileID: 2100000, guid: daeeb1d5267debd49b50bc6b37eeb889, type: 2}
     blockSize: 15
-    noiseAmount: 0.5
+    noiseAmount: 0.01
     injectionPoint: 1000
 --- !u!114 &7833122117494664109
 MonoBehaviour:

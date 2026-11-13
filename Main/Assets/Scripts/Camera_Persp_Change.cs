@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 
 [RequireComponent(typeof(SkyboxSwitcher))]
 [RequireComponent(typeof(Camera))]
@@ -44,10 +45,38 @@ public class Camera_Persp_Change : MonoBehaviour
 
     private float _currentBlend = 0f;
 
+    [Header("CRT References")]
+    [SerializeField] private Material crtMaterial;
+    [Tooltip("Drag your top-level Universal Renderer Data asset (e.g., PC_Renderer) here.")]
+    [SerializeField] private ScriptableRendererData rendererData;
+
+    private ScriptableRendererFeature crtRendererFeature;
+
+    [Header("CRT Settings")]
+    [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private bool startEnabled = true;
+
+    private static readonly int BlendID = Shader.PropertyToID("_Blend");
+    private float currentBlend;
+    private float targetBlend;
+
+
 
 
     private void Awake()
     {
+        if (rendererData != null)
+        {
+            foreach (var feature in rendererData.rendererFeatures)
+            {
+                if (feature is FullScreenPassRendererFeature fsFeature && fsFeature.passMaterial == crtMaterial)
+                {
+                    crtRendererFeature = fsFeature;
+                    break;
+                }
+            }
+        }
+
         cam = GetComponent<Camera>();
         controls = new CameraControls();
         skyboxSwitcher = GetComponent<SkyboxSwitcher>();
@@ -64,6 +93,10 @@ public class Camera_Persp_Change : MonoBehaviour
 
     private void Start()
     {
+        currentBlend = isOrthographic ? 1f : 0f;
+        targetBlend = currentBlend;
+        ApplyBlend();
+
         if (targetObject == null)
             targetObject = playerBody;
 
@@ -85,10 +118,27 @@ public class Camera_Persp_Change : MonoBehaviour
 
     private void OnEnable() => controls.Enable();
     private void OnDisable() => controls.Disable();
-    private void OnDestroy() => controls?.Dispose();
+    private void OnDestroy()
+    {
+        if (crtMaterial != null)
+        {
+            crtMaterial.SetFloat(BlendID, startEnabled ? 1f : 0f);
+        }
+        controls?.Dispose();
+    }
+
+
 
     private void Update()
     {
+
+        if (!Mathf.Approximately(currentBlend, targetBlend))
+        {
+            float CRTspeed = (fadeDuration > 0f) ? (1f / fadeDuration) : 100f;
+            currentBlend = Mathf.MoveTowards(currentBlend, targetBlend, CRTspeed * Time.deltaTime);
+            ApplyBlend();
+        }
+
         bool isPressed = Mouse.current != null && Mouse.current.leftButton.isPressed;
         float target = isTransitioning2 ? 1f : 0f;
 
@@ -171,7 +221,9 @@ public class Camera_Persp_Change : MonoBehaviour
     public void OnPerspchange(InputValue value)
     {
         if (value.isPressed)
+        {
             ToggleProjection();
+        }
     }
 
     public void ToggleProjection()
@@ -182,6 +234,7 @@ public class Camera_Persp_Change : MonoBehaviour
             StopCoroutine(blendCoroutine);
 
         isOrthographic = !isOrthographic;
+        targetBlend = isOrthographic ? 1f : 0f; // CRT turns ON in 2D Ortho, OFF in 3D Persp (flip if needed)
         Enable3DVisuals.Instance.SetEnable3DObjects(!isOrthographic);
         currentVelocity = Vector3.zero;
 
@@ -213,7 +266,7 @@ public class Camera_Persp_Change : MonoBehaviour
 
         while (elapsed < transitionDuration)
         {
-            if(elapsed < transitionDuration * 0.5f)
+            if (elapsed < transitionDuration * 0.5f)
             {
 
                 isTransitioning2 = true;
@@ -285,4 +338,33 @@ public class Camera_Persp_Change : MonoBehaviour
         }
         return result;
     }
+
+    public void ToggleCRT()
+    {
+        targetBlend = Mathf.Approximately(targetBlend, 1f) ? 0f : 1f;
+    }
+
+    public void SetCRTState(bool enabled)
+    {
+        targetBlend = enabled ? 1f : 0f;
+    }
+
+    private void ApplyBlend()
+    {
+        if (crtMaterial != null)
+        {
+            crtMaterial.SetFloat(BlendID, currentBlend);
+        }
+
+        // Automatically toggle the URP Renderer Feature to save GPU bandwidth when off
+        if (crtRendererFeature != null)
+        {
+            bool shouldBeActive = currentBlend > 0.001f;
+            if (crtRendererFeature.isActive != shouldBeActive)
+            {
+                crtRendererFeature.SetActive(shouldBeActive);
+            }
+        }
+    }
 }
+

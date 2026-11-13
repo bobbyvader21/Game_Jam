@@ -449,7 +449,7 @@ MonoBehaviour:
   CameraOrthoOffset: {x: 2, y: 0, z: 0}
   smoothTime: 0.25
   DeadpanRadius: 0.25
-  mouseSensitivity: 15
+  mouseSensitivity: 35
   duration: 1
   currentT: 0
   globalSquishFactor: 0
@@ -457,6 +457,10 @@ MonoBehaviour:
   yRotation: 0
   fadeInDuration: 0.25
   fadeOutDuration: 1
+  crtMaterial: {fileID: 2100000, guid: 6acffffce12237645bf61985f58648ef, type: 2}
+  rendererData: {fileID: 11400000, guid: f288ae1f4751b564a96ac7587541f7a2, type: 2}
+  fadeDuration: 0.5
+  startEnabled: 1
 --- !u!114 &330585549
 MonoBehaviour:
   m_ObjectHideFlags: 0
